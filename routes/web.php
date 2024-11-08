@@ -46,6 +46,7 @@ Route::middleware(['Users'])->group(function() {
     Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout');
     Route::post('/payment', [PaymentController::class, 'payment'])->name('payment');
     Route::get('/order/success', function () { return view('order.success'); })->name('order.success');
+    Route::get('/order/show', [OrderController::class, 'index']);
 });
 
 

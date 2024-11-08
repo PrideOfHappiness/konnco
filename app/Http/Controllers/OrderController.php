@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItems;
 use App\Models\Produk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
@@ -49,5 +50,15 @@ class OrderController extends Controller
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 400);
         }
-    } 
+    }
+
+    public function index(){
+        $data = OrderItems::with(['getOrderID.getUserIDUsers', 'getProductID'])
+        ->whereHas('getOrderID', function($query) {
+            $query->where('idUser', Auth::user()->id);
+        })->get();
+        return view('order.indexOrder', compact('data'));
+    }
+    
+    
 }

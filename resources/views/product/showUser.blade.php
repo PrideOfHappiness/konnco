@@ -39,49 +39,52 @@
     </div>
     @include('template/footer')
     <script>
-        function addToCart(productId, productName, productPrice) {
-            const quantity = document.getElementById('qty').value;
+        const quantity = document.getElementById('qty').value;
 
-            // Ambil data cart dari local storage
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        // Ambil data cart dari local storage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-            // Cek apakah item sudah ada di keranjang
-            const existingItem = cart.find(item => item.product_id === productId);
-            if (existingItem) {
-                existingItem.quantity = parseInt(existingItem.quantity) + parseInt(quantity);
-            } else {
-                cart.push({
-                    product_id: productId,
-                    name: productName,
-                    price: productPrice,
-                    quantity: parseInt(quantity)
-                });
-            }
-
-            localStorage.setItem('cart', JSON.stringify(cart));
-            alert('Item ditambahkan ke keranjang');
-
-            fetch('/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ cart })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.order_id) {
-                    alert('Item berhasil ditambahkan dan order dibuat dengan ID: ' + data.order_id);
-                } else {
-                    alert('Gagal menambah item ke keranjang');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat menambah item ke keranjang');
+        // Cek apakah item sudah ada di keranjang
+        const existingItem = cart.find(item => item.product_id === productId);
+        if (existingItem) {
+            existingItem.quantity = parseInt(existingItem.quantity) + parseInt(quantity);
+        } else {
+            cart.push({
+                product_id: productId,
+                name: productName,
+                price: productPrice,
+                quantity: parseInt(quantity)
             });
         }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert('Item ditambahkan ke keranjang');
+
+        // Debug: cek data cart sebelum dikirim
+        console.log("Cart data:", cart);
+
+        fetch('/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ cart: cart }) // perbaikan di sini, kirim cart dengan benar
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.order_id) {
+                alert('Item berhasil ditambahkan dan order dibuat dengan ID: ' + data.order_id);
+            } else if (data.error) {
+                alert('Error: ' + data.error); // tambahkan pesan error yang lebih jelas
+            } else {
+                alert('Gagal menambah item ke keranjang');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menambah item ke keranjang');
+        });
 
         function checkout() {
             // Ambil data keranjang dari localStorage

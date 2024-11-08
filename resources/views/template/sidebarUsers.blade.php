@@ -34,7 +34,7 @@
                 </a>
           </li>
           <li class="nav-item"> 
-              <a href="#" class="nav-link">
+              <a href="/order/show" class="nav-link">
                 <i class="fa-solid fa-rectangle-xmark"></i>
                   <p>
                     Lihat Order Berlangsung
@@ -42,7 +42,7 @@
                 </a>
           </li>
           <li class="nav-item"> 
-            <a href="#" class="nav-link">
+            <a href="/order/show" class="nav-link">
               <i class="fa-solid fa-signs-post"></i>
                 <p>
                   Histori Order
